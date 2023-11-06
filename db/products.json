@@ -1,0 +1,18 @@
+{
+  "products": [
+    {
+      "name": "laptop",
+      "price": "1000",
+      "description": "asdadad",
+      "inStock": true,
+      "id": 1
+    },
+    {
+      "name": "pc",
+      "price": "1000",
+      "description": "asdsad",
+      "inStock": false,
+      "id": 2
+    }
+  ]
+}
