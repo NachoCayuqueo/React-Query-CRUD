@@ -1,36 +1,77 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createProduct } from "../api/productsAPI";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 
 export const ProductForm = () => {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+
   const queryClient = useQueryClient();
 
   const addProductMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
       console.log("Product added!");
-      queryClient.invalidateQueries("products");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+
+      clearInputs();
     },
   });
 
+  const clearInputs = () => {
+    setName("");
+    setDescription("");
+    setPrice("");
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const product = Object.fromEntries(formData);
-
+    const product = {
+      name,
+      description,
+      price,
+    };
     addProductMutation.mutate({ ...product, inStock: true });
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="name">Name</label>
-      <input type="text" name="name" id="name" />
+    <Box component="form" onSubmit={handleSubmit} sx={{ width: 1 / 2 }}>
+      <Typography variant="h3" gutterBottom>
+        New Product
+      </Typography>
 
-      <label htmlFor="description">Description</label>
-      <input type="text" name="description" id="description" />
+      <TextField
+        id="name"
+        label="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        fullWidth
+        variant="outlined"
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        id="description"
+        label="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        fullWidth
+        variant="outlined"
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        id="price"
+        label="Price"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        fullWidth
+        variant="outlined"
+        sx={{ mb: 2 }}
+      />
 
-      <label htmlFor="price">Price</label>
-      <input type="text" name="price" id="price" />
-
-      <button>Add Product</button>
-    </form>
+      <Button type="submit" variant="contained" style={{ float: "right" }}>
+        Add Product
+      </Button>
+    </Box>
   );
 };

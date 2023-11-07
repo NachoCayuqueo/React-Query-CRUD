@@ -1,5 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct, getProducts, updateProduct } from "../api/productsAPI";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Divider,
+  Typography,
+} from "@mui/material";
+
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export const Products = () => {
   const queryClient = useQueryClient();
@@ -18,40 +28,73 @@ export const Products = () => {
   const updateProductMutation = useMutation({
     mutationFn: updateProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries("products");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
   const deleteProductMutation = useMutation({
     mutationFn: deleteProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries("products");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      console.log("Removed Product!");
     },
   });
 
   if (isLoading) return <div>Loading...</div>;
-  else if (isError) return <div>Error: {error.message}</div>;
+  if (isError) return <div>Error: {error.message}</div>;
 
-  return products.map((product) => (
-    <div key={product.id}>
-      <h3>{product.name}</h3>
-      <p>{product.description}</p>
-      <p>{product.price}</p>
-      <button onClick={() => deleteProductMutation.mutate(product.id)}>
-        Delete
-      </button>
-      <input
-        id={product.id}
-        type="checkbox"
-        checked={product.inStock}
-        onChange={(e) => {
-          updateProductMutation.mutate({
-            ...product,
-            inStock: e.target.checked,
-          });
-        }}
-      />
-      <label htmlFor={product.id}>In Stock</label>
-    </div>
-  ));
+  return (
+    <>
+      <Card sx={{ mt: 10, p: 1, width: 1 / 2 }}>
+        <Typography sx={{ p: 2, textAlign: "center" }} variant="h4">
+          My product list
+        </Typography>
+        <Divider />
+        {products.map((product) => (
+          <>
+            <CardContent>
+              <div key={product.id}>
+                <Typography variant="h5" component="div" gutterBottom>
+                  {product.name}
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {product.description}
+                </Typography>
+                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                  {product.price}
+                </Typography>
+              </div>
+            </CardContent>
+            <CardActions>
+              <input
+                id={product.id}
+                type="checkbox"
+                checked={product.inStock}
+                onChange={(e) => {
+                  updateProductMutation.mutate({
+                    ...product,
+                    inStock: e.target.checked,
+                  });
+                }}
+              />
+              <label htmlFor={product.id}>In Stock</label>
+
+              <Button
+                onClick={() => {
+                  deleteProductMutation.mutate(product.id);
+                }}
+                variant="outlined"
+                color="error"
+                startIcon={<DeleteIcon />}
+                sx={{ ml: 2 }}
+              >
+                Delete
+              </Button>
+            </CardActions>
+            <Divider />
+          </>
+        ))}
+      </Card>
+    </>
+  );
 };
