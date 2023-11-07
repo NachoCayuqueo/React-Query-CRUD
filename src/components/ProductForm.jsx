@@ -49,6 +49,7 @@ export const ProductForm = () => {
         fullWidth
         variant="outlined"
         sx={{ mb: 2 }}
+        required
       />
       <TextField
         id="description"
@@ -58,6 +59,7 @@ export const ProductForm = () => {
         fullWidth
         variant="outlined"
         sx={{ mb: 2 }}
+        required
       />
       <TextField
         id="price"
@@ -67,6 +69,7 @@ export const ProductForm = () => {
         fullWidth
         variant="outlined"
         sx={{ mb: 2 }}
+        required
       />
 
       <Button type="submit" variant="contained" style={{ float: "right" }}>
